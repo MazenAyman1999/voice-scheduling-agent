@@ -65,25 +65,25 @@ def handler(request):
     global conversation
     body = json.loads(request.body)
     user_prompt = body.get("message", "")
-    # conversation.append({"role": "user", "content": user_prompt})
-    # response_obj = cohere_client.chat(model="command-a-03-2025", messages=conversation, tools=tools, temperature=0.3)
-    # if response_obj.message.tool_calls:
-    #     for tc in response_obj.message.tool_calls:
-    #         if (tc.function.name == "get_meeting_details"):
-    #             meeting_details = tools_map[tc.function.name](**json.loads(tc.function.arguments))
-    #             conversation = [{"role": "system", "content": system_prompt}]
-    #             return {
-    #                 "statusCode": 200,
-    #                 "headers": {"Content-Type": "application/json"},
-    #                 "body": json.dumps({"response": f"Meeting scheduled! Link "})
-    #             }
-    # response = response_obj.message.content[0].text
-    # conversation.append({"role": "assistant", "content": response})
-    # return {
-    #     "statusCode": 200,
-    #     "headers": {"Content-Type": "application/json"},
-    #     "body": json.dumps({"response": response})
-    # }
+    conversation.append({"role": "user", "content": user_prompt})
+    response_obj = cohere_client.chat(model="command-a-03-2025", messages=conversation, tools=tools, temperature=0.3)
+    if response_obj.message.tool_calls:
+        for tc in response_obj.message.tool_calls:
+            if (tc.function.name == "get_meeting_details"):
+                meeting_details = tools_map[tc.function.name](**json.loads(tc.function.arguments))
+                conversation = [{"role": "system", "content": system_prompt}]
+                return {
+                    "statusCode": 200,
+                    "headers": {"Content-Type": "application/json"},
+                    "body": json.dumps({"response": f"Meeting scheduled! Link "})
+                }
+    response = response_obj.message.content[0].text
+    conversation.append({"role": "assistant", "content": response})
+    return {
+        "statusCode": 200,
+        "headers": {"Content-Type": "application/json"},
+        "body": json.dumps({"response": response})
+    }
 
 # def main():
 #     # global conversation
