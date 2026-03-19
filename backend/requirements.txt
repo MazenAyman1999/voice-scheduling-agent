@@ -1,0 +1,3 @@
+cohere
+dotenv
+fastapi
