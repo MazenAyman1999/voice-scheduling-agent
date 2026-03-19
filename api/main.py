@@ -2,7 +2,6 @@ import cohere
 import json
 import os
 from dotenv import load_dotenv
-from pydantic import BaseModel
 from typing import Optional
 
 
@@ -65,13 +64,10 @@ tools = [
     }
 ]
 
-class ChatRequest(BaseModel):
-    user_prompt: str
-
 def handler(request):
     user_prompt = request.get_json().get("message", "")
     conversation.append({"role": "user", "content": user_prompt})
-    response_obj = cohere.chat(model="command-a-03-2025", messages=conversation, tools=tools, temperature=0.3)
+    response_obj = cohere_client.chat(model="command-a-03-2025", messages=conversation, tools=tools, temperature=0.3)
     if response_obj.message.tool_calls:
         for tc in response_obj.message.tool_calls:
             if (tc.function.name == "get_meeting_details"):
