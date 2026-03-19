@@ -4,10 +4,7 @@ import os
 from dotenv import load_dotenv
 from pydantic import BaseModel
 from typing import Optional
-from fastapi import FastAPI
 
-
-app = FastAPI()
 
 load_dotenv()
 
@@ -71,20 +68,25 @@ tools = [
 class ChatRequest(BaseModel):
     user_prompt: str
 
-@app.post("/chat")
-def chat(request: ChatRequest):
-    global conversation
-    conversation.append({"role": "user", "content": request.user_prompt})
+def chat(request):
+    user_prompt = json.loads(request.body).get("message", "")
+    conversation.append({"role": "user", "content": user_prompt})
     response_obj = cohere.chat(model="command-a-03-2025", messages=conversation, tools=tools, temperature=0.3)
     if response_obj.message.tool_calls:
         for tc in response_obj.message.tool_calls:
             if (tc.function.name == "get_meeting_details"):
                 meeting_details = tools_map[tc.function.name](**json.loads(tc.function.arguments))
                 conversation = [system_prompt]
-                return {"response": f"Meeting scheduled! Link "}
+                return {
+                    "statusCode": 200,
+                    "body": json.dumps({"response": f"Meeting scheduled! Link "})
+                }
     response = response_obj.message.content[0].text
     conversation.append({"role": "assistant", "content": response})
-    return {"response": response}
+    return {
+        "statusCode": 200,
+        "body": json.dumps({"response": response})
+    }
 
 # def main():
 #     # global conversation

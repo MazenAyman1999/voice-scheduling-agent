@@ -1,4 +1,0 @@
-cohere
-dotenv
-fastapi
-uvicorn
