@@ -5,8 +5,6 @@ from dotenv import load_dotenv
 from typing import Optional
 
 
-load_dotenv()
-
 cohere_client = cohere.ClientV2(os.getenv("COHERE_API_KEY"), log_warning_experimental_features=False)
 
 system_prompt = """
