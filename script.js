@@ -1,4 +1,4 @@
-const backendURL = "../api/chat";
+const backendURL = "/api/chat";
 
 function speak(text) {
   const utterance = new SpeechSynthesisUtterance(text);
@@ -15,6 +15,9 @@ function startListening() {
 
     const res = await fetch(backendURL, {
       method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
       body: JSON.stringify({ message: text }),
     });
 
