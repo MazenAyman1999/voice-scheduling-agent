@@ -69,7 +69,7 @@ class ChatRequest(BaseModel):
     user_prompt: str
 
 def chat(request):
-    user_prompt = json.loads(request.body).get("message", "")
+    user_prompt = request.get_json().get("message", "")
     conversation.append({"role": "user", "content": user_prompt})
     response_obj = cohere.chat(model="command-a-03-2025", messages=conversation, tools=tools, temperature=0.3)
     if response_obj.message.tool_calls:
