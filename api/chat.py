@@ -1,7 +1,6 @@
 import cohere
 import json
 import os
-from dotenv import load_dotenv
 from typing import Optional
 
 
