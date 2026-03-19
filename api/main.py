@@ -63,6 +63,7 @@ tools = [
 ]
 
 def handler(request):
+    global conversation
     user_prompt = request.get_json().get("message", "")
     conversation.append({"role": "user", "content": user_prompt})
     response_obj = cohere_client.chat(model="command-a-03-2025", messages=conversation, tools=tools, temperature=0.3)
@@ -70,7 +71,7 @@ def handler(request):
         for tc in response_obj.message.tool_calls:
             if (tc.function.name == "get_meeting_details"):
                 meeting_details = tools_map[tc.function.name](**json.loads(tc.function.arguments))
-                conversation = [system_prompt]
+                conversation = [{"role": "system", "content": system_prompt}]
                 return {
                     "statusCode": 200,
                     "body": json.dumps({"response": f"Meeting scheduled! Link "})
