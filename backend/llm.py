@@ -4,7 +4,7 @@ import cohere
 from backend.tools import schedule_meeting
 
 
-cohere_client = cohere.ClientV2(st.secrets["COHERE_API_KEY"], log_warning_experimental_features=False)
+cohere_client = cohere.ClientV2(st.secrets["cohere"]["api_key"], log_warning_experimental_features=False)
 
 system_prompt = """
 You are a strict meeting scheduling assistant.
@@ -30,7 +30,7 @@ Your flow MUST follow these steps:
             Date:
             Time:
             Title: (show None if not provided)
-        - Ask the user for confirmation (yes/no or explicit approval).
+        - Ask the user for confirmation.
     5) Scheduling rule (CRITICAL):
         - ONLY schedule the meeting AFTER the user explicitly confirms the details.
         - Do NOT assume confirmation.
@@ -67,7 +67,7 @@ tools = [
                     "time": {
                         "type": "string",
                         "format": "time",
-                        "description": "The time of the meeting.",
+                        "description": "The time of the meeting in hours and minutes only.",
                     },
                     "title": {
                         "type": "string",
@@ -94,5 +94,6 @@ def chat(conversation: list[dict]) -> tuple:
                     Date: {meeting_details['date']}\n
                     Time: {meeting_details['time']}\n
                     Title: { meeting_details.get("title", "None")}
+                    Link: {meeting_details["link"]}
                     """, meeting_details
     return response.message.content[0].text, None

@@ -162,11 +162,22 @@
 #     st.sidebar.info("No meetings scheduled yet.")
 
 import streamlit as st
+from backend.auth import get_auth_url, fetch_token
 from backend.llm import system_prompt, chat
 from backend.audio import speech_to_text, text_to_speech
 
 
 st.title("Voice Scheduling Agent")
+query_params = st.query_params
+
+if "credentials" not in st.session_state:
+    if "code" not in query_params:
+        auth_url = get_auth_url()
+        st.link_button("🔐 Login with Google", auth_url)
+        st.stop()
+    else:
+        creds = fetch_token(query_params["code"])
+        st.session_state.credentials = creds
 if "conversation" not in st.session_state:
     st.session_state.conversation = [{"role": "system", "content": system_prompt}]
 if "meetings" not in st.session_state:
@@ -188,6 +199,7 @@ if input:
             assistant_msg, meeting = chat(st.session_state.conversation)
             if meeting:
                 st.session_state.meetings.append(meeting)
+                st.markdown(f"[Open in Google Calendar]({meeting['link']})")
             st.session_state.conversation.append({"role": "assistant", "content": assistant_msg})
             audio_path = text_to_speech(assistant_msg)
             st.audio(audio_path, autoplay=True)
