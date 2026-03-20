@@ -1,47 +1,15 @@
-import streamlit as st
 from typing import Optional
-from datetime import datetime
-from googleapiclient.discovery import build
-
+from urllib.parse import urlencode
 
 
 def schedule_meeting(host_name: str, date: str, time: str, title: Optional[str] = None) -> dict[str]:
-    # details = {"host_name": host_name, "date": date, "time": time}
-    # if title is not None:
-    #     details["title"] = title
-    # return details
-    
-    dt_str = f"{date} {time}"
-    start_dt = datetime.strptime(dt_str, "%Y-%m-%d %H:%M")
-
-    end_dt = start_dt.replace(hour=start_dt.hour + 1)
-
-    # Authenticate
-    creds = st.session_state.get("credentials")
-
-    service = build("calendar", "v3", credentials=creds)
-
-    event = {
-        "summary": title if title else f"Meeting with {host_name}",
-        "start": {
-            "dateTime": start_dt.isoformat(),
-            "timeZone": "Africa/Cairo",
-        },
-        "end": {
-            "dateTime": end_dt.isoformat(),
-            "timeZone": "Africa/Cairo",
-        },
-    }
-
-    created_event = service.events().insert(
-        calendarId="primary",
-        body=event
-    ).execute()
-
-    return {
-        "host_name": host_name,
-        "date": date,
-        "time": time,
-        "title": title,
-        "link": created_event.get("htmlLink")
-    }
+    details = {"host_name": host_name, "date": date, "time": time}
+    if title is not None:
+        details["title"] = title
+    details["link"] = "https://www.google.com/calendar/render?" + urlencode({
+        "action": "TEMPLATE",
+        "text": details.get("title") or f"Meeting with {host_name}",
+        "dates": f"{date.replace('-','')}T{time.replace(':','')}00/{date.replace('-','')}T{time.replace(':','')}00",
+        "details": "Scheduled via Streamlit Voice Agent"
+    })
+    return details
