@@ -1,2 +1,4 @@
-.venv
-.streamlit
+__pycache__/
+.venv/
+.streamlit/
+Notes.txt
