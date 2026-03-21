@@ -2,6 +2,9 @@ from enum import Enum
 
 
 class MeetingDetails(Enum):
+    """
+    Enum representing keys used in meeting detail dictionaries.
+    """
     host_name = "host_name"
     date = "date"
     time = "time"

@@ -1,3 +1,13 @@
+"""
+Streamlit frontend for the Voice Scheduling Agent.
+Features:
+    - Chat-based interface for scheduling meetings
+    - Voice input (speech-to-text)
+    - Voice output (text-to-speech)
+    - Sidebar displaying scheduled meetings
+"""
+
+
 import utils
 import streamlit as st
 from backend.llm import system_prompt, chat
@@ -5,10 +15,12 @@ from backend.audio import speech_to_text, text_to_speech
 
 
 st.title("Voice Scheduling Agent")
+# SESSION STATE INITIALIZATION
 if "conversation" not in st.session_state:
     st.session_state.conversation = [{"role": "system", "content": system_prompt}]
 if "meetings" not in st.session_state:
     st.session_state.meetings = []
+# CHAT INTERFACE
 for msg in st.session_state.conversation[1:]:
     with st.chat_message(msg["role"]):
         st.markdown(msg["content"])
@@ -31,6 +43,7 @@ if input:
             st.audio(audio_path, autoplay=True)
             with st.chat_message("assistant"):
                 st.markdown(assistant_msg)
+# SIDEBAR
 st.sidebar.title("📌 Scheduled Meetings")
 if st.session_state.meetings:
     for i, meeting in enumerate(st.session_state.meetings, 1):

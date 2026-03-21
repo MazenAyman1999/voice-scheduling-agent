@@ -88,6 +88,23 @@ tools = [
 tools_map = {"schedule_meeting": schedule_meeting}
 
 def chat(conversation: list[dict]) -> tuple:
+    """
+    Send conversation to a Cohere's LLM and handle tool execution if triggered.
+    Args:
+        conversation (list[dict]): Chat history including system, user, and assistant messages.
+    Returns:
+        tuple:
+            - str: Assistant response text
+            - dict | None: Meeting details if a meeting was scheduled, otherwise None
+    Workflow:
+        1. Send conversation to the LLM.
+        2. Check if a tool call is requested.
+        3. If tool call exists:
+            - Execute the corresponding backend function.
+            - Append tool response to conversation.
+            - Call LLM again to generate final response.
+        4. Return assistant reply and optional meeting data.
+    """
     response = cohere_client.chat(model="command-a-03-2025", messages=conversation, tools=tools, temperature=0.3)
     if response.message.tool_calls:
         conversation.append(response.message)
