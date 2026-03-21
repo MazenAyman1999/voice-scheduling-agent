@@ -1,3 +1,4 @@
+import utils
 import streamlit as st
 from backend.llm import system_prompt, chat
 from backend.audio import speech_to_text, text_to_speech
@@ -35,11 +36,12 @@ if st.session_state.meetings:
     for i, meeting in enumerate(st.session_state.meetings, 1):
         st.sidebar.markdown(f"""
         **Meeting {i}**
-        - 👤: {meeting["host_name"]}
-        - 📅: {meeting["date"]}
-        - ⏰: {meeting["time"]}
-        {f'- 🏷️: {meeting["title"]}' if meeting.get("title") else ''}
-        - 🔗: [Meeting Link]({meeting["link"]})
+        - 👤: {meeting[utils.host_name_key]}
+        - 📅: {meeting[utils.date_key]}
+        - ⏰: {meeting[utils.time_key]}
+        {f'- 🏷️: {meeting[utils.title_key]}' if meeting.get(utils.title_key) else ''}
+        ⌛: {meeting[utils.duration_key]}
+        - 🔗: [Event Link]({meeting[utils.link_key]})
         """)
 else:
     st.sidebar.info("No meetings scheduled yet.")

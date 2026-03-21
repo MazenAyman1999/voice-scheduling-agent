@@ -1,5 +1,6 @@
 import json
 import cohere
+import utils
 import streamlit as st
 from backend.tools import schedule_meeting
 
@@ -14,14 +15,14 @@ Your flow MUST follow these steps:
         - Host name
         - Meeting date
         - Meeting time
+        - Meeting Duration
         - Meeting title (OPTIONAL — user may skip it)
     2) Validate inputs before proceeding:
         - Host name must be a non-empty string.
         - Date MUST include day, month, and YEAR (e.g., 25 March 2026 or 2026-03-25).
         - Title is optional.
     3) Handle missing or invalid inputs:
-        - If any required field is missing or unclear, ask ONLY for the missing/invalid field.
-        - Do NOT restart the whole process.
+        - If any required field is missing or unclear, ask ONLY for the missing/invalid field, don't ask for the whole details.
         - If the date is missing the year, explicitly ask the user to include the year.
         - If the title is missing, proceed without forcing it.
     4) Confirmation from the user:
@@ -29,6 +30,7 @@ Your flow MUST follow these steps:
             Host Name:
             Date:
             Time:
+            Duration:
             Title: (show None if not provided)
         - Ask the user for confirmation.
         - ONLY schedule the meeting AFTER the user explicitly confirms the details.
@@ -36,12 +38,10 @@ Your flow MUST follow these steps:
     5) Behavior constraints:
         - Be concise and structured.
         - Do NOT auto-correct without asking the user.
-        - Do NOT perform any task other than meeting scheduling.
         - After scheduling a meeting, don't show the meeting link to the user.
     6) Edge cases:
         - If the user provides multiple values (e.g., two dates), ask for clarification.
         - If the user changes a field after confirmation, restart confirmation with updated values.
-        - If the user provides all details in one message, skip questions and go directly to validation + confirmation.
     7) Audio handling:
         - If the user input is unclear, ask them to repeat what was said.
 """
@@ -55,26 +55,31 @@ tools = [
             "parameters": {
                 "type": "object",
                 "properties": {
-                    "host_name": {
+                    utils.host_name_key: {
                         "type": "string",
                         "description": "The name of the meeting host.",
                     },
-                    "date": {
+                    utils.date_key: {
                         "type": "string",
                         "format": "date",
-                        "description": "The date of the meeting.",
+                        "description": "The date of the meeting in 'YYYY-MM-DD' format.",
                     },
-                    "time": {
+                    utils.time_key: {
                         "type": "string",
                         "format": "time",
-                        "description": "The time of the meeting in hours and minutes only.",
+                        "description": "The time of the meeting in 'HH:MM' format.",
                     },
-                    "title": {
+                    utils.duration_key: {
+                        "type": "string",
+                        "format": "time",
+                        "description": "The duration of the meeting in hours and minutes only.",
+                    },
+                    utils.title_key: {
                         "type": "string",
                         "description": "The title of the meeting.",
                     }
                 },
-                "required": ["host_name", "date", "time"]
+                "required": [utils.host_name_key, utils.date_key, utils.time_key, utils.duration_key]
             }
         }
     }
@@ -84,18 +89,18 @@ tools_map = {"schedule_meeting": schedule_meeting}
 
 def chat(conversation: list[dict]) -> tuple:
     response = cohere_client.chat(model="command-a-03-2025", messages=conversation, tools=tools, temperature=0.3)
-    meeting_details = None
     if response.message.tool_calls:
-            conversation.append(response.message)
-            for tc in response.message.tool_calls:
-                if (tc.function.name == "schedule_meeting"):
-                    meeting_details = tools_map[tc.function.name](**json.loads(tc.function.arguments))
-                    conversation.append(
-                        {
-                            "role": "tool",
-                            "tool_call_id": tc.id,
-                            "content": str(meeting_details),
-                        }
-                    )
-    response = cohere_client.chat(model="command-a-03-2025", messages=conversation, tools=tools, temperature=0.3)
-    return response.message.content[0].text, meeting_details
+        conversation.append(response.message)
+        for tc in response.message.tool_calls:
+            if (tc.function.name == "schedule_meeting"):
+                meeting_details = tools_map[tc.function.name](**json.loads(tc.function.arguments))
+                conversation.append(
+                    {
+                        "role": "tool",
+                        "tool_call_id": tc.id,
+                        "content": str(meeting_details),
+                    }
+                )
+                return cohere_client.chat(model="command-a-03-2025", messages=conversation, tools=tools,
+                                          temperature=0.3).message.content[0].text, meeting_details
+    return response.message.content[0].text, None

@@ -1,4 +1,0 @@
-cohere
-streamlit
-SpeechRecognition
-gTTS
