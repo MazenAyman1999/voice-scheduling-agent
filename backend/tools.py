@@ -33,7 +33,7 @@ def schedule_meeting(host_name: str, date: str, time: str, duration: str, title:
         details[utils.title_key] = title
     details[utils.link_key] = "https://www.google.com/calendar/render?" + urlencode({
         "action": "TEMPLATE",
-        "description": f"Meeting Host Name: {host_name}\nMeeting Title: {str(details.get(utils.title_key))})",
+        "details": f"Meeting Host Name: {host_name}\nMeeting Title: {str(details.get(utils.title_key))})",
         "dates": f"{start_timestamp.strftime('%Y%m%dT%H%M%S')}/{end_timestamp.strftime('%Y%m%dT%H%M%S')}",
     })
     return details

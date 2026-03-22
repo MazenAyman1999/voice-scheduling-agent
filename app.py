@@ -52,8 +52,8 @@ if st.session_state.meetings:
         - 👤: {meeting[utils.host_name_key]}
         - 📅: {meeting[utils.date_key]}
         - ⏰: {meeting[utils.time_key]}
+        - ⌛: {meeting[utils.duration_key]}
         {f'- 🏷️: {meeting[utils.title_key]}' if meeting.get(utils.title_key) else ''}
-        ⌛: {meeting[utils.duration_key]}
         - 🔗: [Event Link]({meeting[utils.link_key]})
         """)
 else:
