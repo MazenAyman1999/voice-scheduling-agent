@@ -1,8 +1,8 @@
 import json
 import cohere
-import utils
 import streamlit as st
 from backend.tools import schedule_meeting
+from backend import utils
 
 
 cohere_client = cohere.ClientV2(st.secrets["COHERE_API_KEY"], log_warning_experimental_features=False)

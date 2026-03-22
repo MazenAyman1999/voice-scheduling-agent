@@ -8,10 +8,10 @@ Features:
 """
 
 
-import backend.utils
 import streamlit as st
 from backend.llm import system_prompt, chat
 from backend.audio import speech_to_text, text_to_speech
+from backend import utils
 
 
 st.title("Voice Scheduling Agent")

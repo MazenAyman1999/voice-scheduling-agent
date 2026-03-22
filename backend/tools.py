@@ -1,7 +1,7 @@
-import utils
 from typing import Optional
 from urllib.parse import urlencode
 from datetime import datetime, timedelta
+from backend import utils
 
 
 def schedule_meeting(host_name: str, date: str, time: str, duration: str, title: Optional[str] = None) -> dict[str]:
