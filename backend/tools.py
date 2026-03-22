@@ -30,7 +30,7 @@ def schedule_meeting(host_name: str, date: str, time: str, duration: str, title:
     duration_hours, duration_minutes = map(int, duration.split(":"))
     end_timestamp = start_timestamp + timedelta(hours=duration_hours, minutes=duration_minutes)
     if title is not None:
-        details[utils.title] = title
+        details[utils.title_key] = title
     details[utils.link_key] = "https://www.google.com/calendar/render?" + urlencode({
         "action": "TEMPLATE",
         "description": f"Meeting Host Name: {host_name}\nMeeting Title: {str(details.get(utils.title_key))})",
