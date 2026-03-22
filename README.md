@@ -66,7 +66,7 @@ The backend calculates this using:
 * `datetime.strptime()` → parse date & time
 * `timedelta()` → add duration
 ---
-### 3. `description`
+### 3. `details`
 Contains meeting details such as:
 ```
 Meeting Host Name: John
