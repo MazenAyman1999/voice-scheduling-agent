@@ -87,7 +87,7 @@ The system converts user input into timestamps:
   3. Add duration → end datetime
   4. Format both timestamps into Google Calendar format
 ---
-## 🧾 Example Generated Link
+## Example Generated Link
 ```
 https://www.google.com/calendar/render?action=TEMPLATE
 &dates=20260325T140000/20260325T150000
@@ -100,5 +100,13 @@ Opening this link will:
 * Allow the user to review and save the event
 ---
 # Screenshots
-
-# Loom Video
+![](./resources/1.png)
+![](./resources/2.png)
+![](./resources/3.png)
+![](./resources/4.png)
+![](./resources/5.png)
+![](./resources/6.png)
+![](./resources/7.png)
+![](./resources/8.png)
+# Video
+[Link](https://drive.google.com/file/d/1RfNqmP8U25lInD9F3-Pxe9T2VXOP-nzv/view?usp=sharing).
