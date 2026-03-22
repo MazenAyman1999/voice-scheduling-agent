@@ -51,7 +51,7 @@ tools = [
         "type": "function",
         "function": {
             "name": "schedule_meeting",
-            "description": "Schedules a meeting only after user confirmation on the meeting details.",
+            "description": "Schedules a meeting. Should be called only after explicit user confirmation on the meeting details.",
             "parameters": {
                 "type": "object",
                 "properties": {
